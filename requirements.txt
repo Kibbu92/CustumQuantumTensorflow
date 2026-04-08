@@ -1,0 +1,28 @@
+# Core
+numpy==1.24.4
+scipy==1.11.0
+absl-py==1.4.0
+
+# TensorFlow
+tensorflow==2.10.0
+tensorflow-estimator==2.10.0
+tensorboard==2.10.1
+tensorflow-io-gcs-filesystem==0.31.0
+tensorstore==0.1.69
+
+# PyTorch
+torch==2.8.0
+torchvision==0.23.0
+
+# JAX + Flax + Haiku
+jax==0.4.30
+jaxlib==0.4.30
+flax==0.8.5
+dm-haiku==0.0.12
+optax==0.2.4
+orbax-checkpoint==0.6.4
+ml-dtypes==0.4.0
+
+# PennyLane
+pennylane==0.38.0
+pennylane-lightning==0.38.0
