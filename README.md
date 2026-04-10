@@ -1,4 +1,4 @@
-# Tensor_QTF
+# CustumQuantumTensorflow
 
 This repository provides a TensorFlow-based implementation of quantum circuits as custom layers, designed to bridge classical machine learning and quantum computing. The framework allows efficient simulation of quantum algorithms with GPU acceleration, offering scalability and improved computational efficiency compared to other implementations such as Pennylane (Flax), TensorFlow, and PyTorch.
 
