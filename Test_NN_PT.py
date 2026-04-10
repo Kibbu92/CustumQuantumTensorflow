@@ -201,7 +201,7 @@ if __name__=='__main__':
             
             print(f"({DT:.2e}) Epoch {i} - Loss: {avg_loss:.4f}, Accuracy: {train_accuracy :.2f} - Validation Loss: {avg_valid_loss:.4f}, Validation Accuracy: {valid_accuracy:.2f}%")
         
-    torch.save(model.state_dict(), 'quantum_nn_model.pth')
+    # torch.save(model.state_dict(), 'quantum_nn_model.pth')
 
     results = {
         "train_loss": train_losses,
