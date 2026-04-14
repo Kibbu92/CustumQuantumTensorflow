@@ -37,8 +37,3 @@ Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
-
-## Citation
-If you use this repository in your research, please cite the corresponding paper:
-
-Carbone, A. "Efficient Quantum Circuit Implementation with TensorFlow Custom Layer."
