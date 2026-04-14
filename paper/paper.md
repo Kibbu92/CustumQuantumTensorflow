@@ -62,91 +62,142 @@ to adopt across a broader research community.
 
 # State of the field
 
-The current landscape of HQML is dominated by well-established frameworks that enable the simulation of quantum circuits 
-and their integration with classical deep learning models.
+The field of HQNNs is dominated by well-established frameworks that enable quantum circuit simulation and integration
+with classical deep learning models.
 
-Among these, PennyLane represents one of the most widely adopted solutions. It provides high-level abstractions for quantu
-circuit design, including built-in templates and data encoding strategies. A key strength of PennyLane lies in its flexibility, 
-as it supports major machine learning frameworks, including TensorFlow [CITE], PyTorch [CITE], and JAX/Haiku [CITE]. This 
-interoperability is achieved through dedicated interface modules that translate native PennyLane quantum circuits into 
-representations compatible with classical machine learning layers (e.g., qml.qnn.KerasLayer, qml.qnn.TorchLayer). Similarly, 
-TensorFlow Quantum provides tight integration with TensorFlow, using Cirq [CITE] as its underlying quantum circuit simulator.
+Among these, PennyLane represents one of the most widely used solutions. It provides high-level abstractions for quantum
+circuit construction, including data encoding strategies and variational templates. A key strength of PennyLane lies in 
+its flexibility, supporting the integration with TensorFlow [CITE], PyTorch [CITE], and JAX/Haiku [CITE] through dedicated 
+interface layers (e.g., qml.qnn.KerasLayer, qml.qnn.TorchLayer). Similarly, TensorFlow Quantum enables the implementation 
+of HQNNs by using Cirq [cite] as its underlying quantum circuit simulator.
 
-Despite their capabilities, these frameworks share a common design paradigm in which quantum circuits are treated as external 
-components that must be interfaced with classical machine learning pipelines. This approach typically requires:
-- external simulators responsible for executing quantum circuits
-- intermediate wrappers to ensure compatibility with ML frameworks  
+Despite their capabilities, these frameworks share a common architectural paradigm: quantum circuits are treated as external 
+components executed outside the core machine learning graph. This leads to:
+- reliance on external quantum circuit simulator 
+- additional wrapper layers to ensure compatibility with frameworks  
 - cross-framework data conversion and execution overhead 
 
-In practice, this design can introduce inefficiencies, particularly when targeting GPU acceleration or working in environments 
-that are not natively supported (e.g., Windows-based systems).
+## Build vs Contribute Justification 
 
-In contrast, the proposed 'QuLayer' framework is fully implemented within TensorFlow, removing dependencies on external quantum simulation 
-engines and enabling direct integration with TensorFlow’s GPU execution pipeline in Windows. As a result, the proposed framework offers 
-a lightweight and efficient alternative that reduces system complexity and simplifies the deployment of quantum-inspired models. 
+In contrast, QuLayer adopts a fundamentally different design approach by embedding quantum operations directly into TensorFlow 
+as native differentiable operations.
+
+| Aspect | Existing frameworks | QuLayer |
+|------|--------------------|----------|
+| Quantum execution | External backend | Native TensorFlow ops |
+| Integration | Adapter layers | Direct graph integration |
+| GPU usage | Indirect | Native |
+| System dependency | High | Minimal |
+
+This makes QuLayer not a replacement for quantum hardware simulators, but a lightweight alternative for HQNN research.
 
 
 # Software design
 
-## Custom Q-TF Layer
+## Custom Quantum Layer
 
-The proposed framework is designed to have the quantum layer as a fully customizable TensorFlow module that provides a set of fundamental
-quantum operations as building blocks for constructing arbitrary quantum circuits. Interaction with classical states is supported through both
-amplitude and angle embeddings for encoding the quantum state, along with Pauli measurements and probabilistic decoding, enabling flexible 
-integration of classical and quantum information. In particular, the layer includes a set of fundamental quantum operations, including 
-single-qubit rotation gates around the x-, y-, and z-axes (Rx, Ry, Rz), and controlled-Z (CZ) entangling gates. 
+The proposed framework implements a fully customizable TensorFlow layer that provides a set of fundamental quantum operations used as 
+building blocks for parameterized quantum circuits.
 
-Although the current implementation does not encompass all possible quantum gates, the provided initial set is sufficient to express a wide
-class of parameterized quantum circuits, and the modular structure allows additional operations to be incorporated with minimal effort. Indeed, 
-by releasing the framework as open-source software, the objective is to encourage collective development and continuous expansion of the available
-quantum functionalities over time. A specific quantum circuit configuration is adopted as a representative application, inspired by the 
-circuit-centric classifier design [20], based on a parameterized vsariational quantum circuit composed of amplitude encoding followed by strongly 
-entangling layers. Although the present study focuses on this particular configuration, the quantum layer is not restricted to it and can be 
-readily adapted to alternative circuit architectures.
+The layer supports:
+- amplitude and angle embeddings for classical-to-quantum encoding  
+- Pauli-Z measurement and probabilistic decoding  
+- single-qubit rotation gates around the x-, y-, and z-axes  
+- controlled-Z entangling operations
 
-The design, illustrated in Figure, reports the scheme:
-- Each qubit undergoes a sequence of three parameterized single-qubit rotations (`R_z(θ1)`, `R_y(θ2)`, `R_z(θ3)`)
-- Qubits are entangled using controlled operations in a ring topology, with progressively skipping connections per layer
-- Final quantum state is measured via the Pauli-Z operator on each qubit, producing a continuous vector used as input for classical layers
+Although the current implementation does not include the full set of possible quantum gates, it is sufficient to represent a wide class of 
+variational quantum circuits. The modular design allows additional operations to be incorporated with minimal effort. Indeed, by releasing 
+the framework as open-source software, the objective is to encourage collective development and continuous expansion of the available quantum 
+functionalities. The circuit architecture used in this work is inspired by circuit-centric variational models [20] and is composed by amplitude 
+encoding followed by strongly entangling layers. Although the present study focuses on this particular configuration, the quantum layer is not 
+restricted to it and can be readily adapted to alternative circuit architectures.
 
-![Quantum Layer Schematic](../StrongLayers.png)
+In particular, the quantum circuit consists on (see Figure):
+- Sequential application if single-qubit rotations ($$R_z(θ_1)$$, $$R_y(θ_2)$$, $$R_z(θ_3)$$).
+- Entanglement using controlled operations in a ring topology, with progressively skipping connections per layer
+- Measurement via expectation values of Pauli-Z operators 
+
+![Quantum Layer Schematic](Images/StrongLayers.png)
 
 ## HQNN implementation
 
-The proposed HQNN takes as input $28 \times 28$ grayscale images from the MNIST and FashionMNIST datasets. The data is first processed 
-by a sequence of convolutional blocks designed to progressively extract hierarchical feature representations. The first hidden stage consists 
-of a two-dimensional convolutional layer with $n$ filters and a $2 \times 2$ kernel. The layer uses *same* padding to preserve spatial 
-dimensions and applies a ReLU activation function to introduce non-linearity. This is followed by a max pooling operation with a 
-$2 \times 2$ pooling window and a stride of $1 \times 1$, which reduces redundancy while retaining the most relevant spatial features.
+The proposed HQNN takes as input $28 \times 28$ grayscale images from the MNIST and FashionMNIST datasets. The input is processed through 
+a sequence of convolutional blocks designed to extract hierarchical feature representations. The first hidden stage consists of a two-dimensional 
+convolutional layer with $n$ filters and a $2 \times 2$ kernel. The layer uses *same* padding to preserve spatial dimensions and applies a ReLU 
+activation function to introduce non-linearity. This is followed by a max pooling operation with a $2 \times 2$ pooling window and a stride 
+of $1 \times 1$, which reduces redundancy while retaining the most relevant spatial features.
 
-This convolution–pooling block is repeated three times. In each subsequent repetition, the number of filters is increased progressively 
-to $2n$ and $4n$, respectively. This hierarchical expansion allows the network to capture increasingly abstract and high-level r
-epresentations of the input data. After the final convolutional stage, the output tensor has dimensions $(\text{batch}, m, m, 4n)$, 
-where $m$ denotes the resulting spatial resolution. Since the quantum layer operates on a different data structure, the tensor is reshaped 
-into $(\text{batch}, m \cdot m, 4n)$ before being passed to the quantum component. This transformation ensures that spatial information
+This convolution–pooling block is repeated three times, with the number of filters progressively increasing to $2n$ and $4n$. After the final 
+convolutional stage, the output tensor has shape $(\text{batch}, m, m, 4n)$, where $m$ denotes the resulting spatial resolution after max pooling operations. 
+The tensor is reshaped into $(\text{batch}, m \cdot m, 4n)$ before being passed to the quantum component. This transformation ensures that spatial information
 is reorganized into a format compatible with the quantum encoding process, allowing each feature vector to be processed independently.
 
-The quantum layer employs amplitude encoding to map classical data into quantum states. The number of required qubits $n_Q$ is determined by the dimensionality
-of the input feature space $n$:
+The quantum embedding uses amplitude encoding, and the number of required qubits $n_Q$ is given by:
+
 $$
 n_Q = 2 + \log_2(n)
 $$
-Equivalently, the minimum number of qubits is chosen such that the quantum state space can fully encode the reshaped feature vector without information loss. 
-This ensures compatibility between the classical convolutional pipeline and the quantum embedding layer.
 
-# Research impact statement
+From this relationship, it follows that the number of convolutional filters and the number of qubits are strictly coupled through a logarithmic mapping. 
+Consequently, fixing one of the two quantities determines the other. In practical implementations, it is common to select the number of filters $n$ such that 
+$n_Q$ is an integer value. This is typically achieved by constraining $n$ to be a power of two, i.e., $n = 2^k$, which ensures exact representability in the 
+logarithmic mapping without requiring rounding or truncation.
 
----
+# Research Impact Statement
+
+The proposed QuLayer framework provides a reproducible and GPU-accelerate implementation of HQNNs through a fully TensorFlow-native design, embedding parameterized 
+quantum circuits directly into standard deep learning workflows. Comparison with PennyLane-based implementations demonstrates that the proposed approach reproduces 
+the behavior of established quantum simulation frameworks with high numerical accuracy. In terms of computational performance, QuLayer achieves significant reductions in 
+execution time compared to existing HQNN pipelines, while maintaining equivalent  predictive accuracy across benchmark datasets such as MNIST and FashionMNIST.
+
+A key aspect of this work is its reproducibility: the implementation is fully open-source, relies exclusively on standard TensorFlow operations, and is compatible
+with GPU execution on Windows systems without requiring external quantum simulation backends. These characteristics make QuLayer immediately usable for hybrid 
+quantum-classical research workflows, enabling faster experimentation and reducing system-level complexity in practical applications.
+
+## Accuracy and Computational Performance
+
+The QuLayer implementation was validated against a reference quantum circuit built using PennyLane everaging its AmplitudeEmbedding() function for amplitude 
+mapping and the StronglyEntanglingLayers() function for parameterized quantum gates. The observed error distribution is tightly concentrated, with:
+
+- Mean error: $2.45 \times 10^{-8}$  
+- Standard deviation: $9.87 \times 10^{-8}$  
+
+This confirms that the proposed tensor-based formulation preserves the functional behavior of variational quantum circuits within numerical limits.
+
+![Quantum Layer Schematic](Images/Error_ToT.png)
+
+In terms of computational efficiency, QuLayer provides consistent speedups compared to widely used hybrid quantum-classical implementations. Experimental results show:
+
+- up to **10× reduction in execution time** compared to TensorFlow-based PennyLane integrations  
+- approximately **5× improvement** compared to PyTorch and JAX/Haiku-based implementations  
+
+Importantly, these performance gains are obtained under controlled conditions where model architectures, hyperparameters, and training procedures are strictly aligned
+across all frameworks. This ensures that reported improvements reflect differences in execution strategy rather than differences in model design or optimization setup.
+No degradation in predictive performance is observed across MNIST and FashionMNIST experiments, confirming that efficiency improvements do not compromise model accuracy.
+
+![Quantum Layer Schematic](Images/Performance.png)
+
+## Practical Significance and Reproducibility
+
+A key aspect of this work is its focus on accessibility and reproducibility. The entire implementation is based exclusively on standard TensorFlow operations, enabling 
+native GPU acceleration on Windows systems without requiring external quantum simulation backends or Linux-based environments. This design significantly reduces 
+system-level complexity and lowers the barrier to entry for researchers in hybrid quantum-classical machine learning, particularly those without access to specialized 
+quantum computing infrastructures. All experiments are conducted using publicly available datasets, standardized preprocessing pipelines, and consistent training 
+configurations across frameworks. The full implementation is released as open-source software, enabling direct reproduction and extension of the reported results.
+
+
+## Scope and Interpretation
+
+It is important to emphasize that QuLayer is not intended as a replacement for dedicated quantum hardware simulators, but rather as a lightweight and efficient framework for 
+embedding variational quantum circuits within machine learning workflows. Its primary contribution lies in enabling fast experimentation and integration of quantum-inspired 
+models within widely used deep learning ecosystems. Overall, QuLayer provides a practical and immediately usable tool for hybrid quantum-classical research, enabling faster 
+development cycles, improved accessibility, and scalable experimentation within GPU-accelerated environments.
+
 
 # AI usage disclosure
 
 Generative AI tools were used to assist in improving the clarity and structure of the manuscript and documentation. 
 All technical content, experimental design, and implementation details were reviewed and validated by the author.
-
-
-# Acknowledgements
-
-This work builds upon TensorFlow open-source software ecosystems. 
 
 
 # References
