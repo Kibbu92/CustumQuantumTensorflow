@@ -117,7 +117,9 @@ In particular, the quantum circuit consists on (see Figure):
 - Entanglement using controlled operations in a ring topology, with progressively skipping connections per layer
 - Measurement via expectation values of Pauli-Z operators 
 
-![Quantum Layer Schematic](Images/StrongLayers.png)
+<p align="center">
+  <img src="../Images/StrongLayers.png" width="80%"/>
+</p>
 
 ## HQNN implementation
 
@@ -164,7 +166,14 @@ mapping and the StronglyEntanglingLayers() function for parameterized quantum ga
 
 This confirms that the proposed tensor-based formulation preserves the functional behavior of variational quantum circuits within numerical limits.
 
-![Quantum Layer Schematic](Images/Error_ToT.png)
+<p align="center">
+  <img src="../Images/Error_ToT.png" width="50%"/>
+</p>
+
+<p align="center">
+  <img src="../Images/Error_ToT.png" width="45%" />
+  <img src="../Images/Performance.png" width="45%" />
+</p>
 
 In terms of computational efficiency, QuLayer provides consistent speedups compared to widely used hybrid quantum-classical implementations. Experimental results show:
 
@@ -175,7 +184,9 @@ Importantly, these performance gains are obtained under controlled conditions wh
 across all frameworks. This ensures that reported improvements reflect differences in execution strategy rather than differences in model design or optimization setup.
 No degradation in predictive performance is observed across MNIST and FashionMNIST experiments, confirming that efficiency improvements do not compromise model accuracy.
 
-![Quantum Layer Schematic](Images/Performance.png)
+<p align="center">
+  <img src="../Images/Performance.png" width="500"/>
+</p>
 
 ## Practical Significance and Reproducibility
 
