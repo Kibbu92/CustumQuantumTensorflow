@@ -109,7 +109,7 @@ The design, illustrated in Figure, reports the scheme:
 - Qubits are entangled using controlled operations in a ring topology, with progressively skipping connections per layer
 - Final quantum state is measured via the Pauli-Z operator on each qubit, producing a continuous vector used as input for classical layers
 
-![Quantum Layer Schematic](StrongLayers.png)
+![Quantum Layer Schematic](../StrongLayers.png)
 
 ## HQNN implementation
 
@@ -121,48 +121,33 @@ $2 \times 2$ pooling window and a stride of $1 \times 1$, which reduces redundan
 
 This convolution–pooling block is repeated three times. In each subsequent repetition, the number of filters is increased progressively 
 to $2n$ and $4n$, respectively. This hierarchical expansion allows the network to capture increasingly abstract and high-level r
-epresentations of the input data.
-
-After the final convolutional stage, the output tensor has dimensions $(\text{batch}, m, m, 4n)$, where $m$ denotes the resulting spatial resolution. 
-Since the quantum layer operates on a different data structure, the tensor is reshaped into $(\text{batch}, m \cdot m, 4n)$ before being passed 
-to the quantum component. This transformation ensures that spatial information is reorganized into a format compatible with the quantum encoding process, 
-allowing each feature vector to be processed independently.
+epresentations of the input data. After the final convolutional stage, the output tensor has dimensions $(\text{batch}, m, m, 4n)$, 
+where $m$ denotes the resulting spatial resolution. Since the quantum layer operates on a different data structure, the tensor is reshaped 
+into $(\text{batch}, m \cdot m, 4n)$ before being passed to the quantum component. This transformation ensures that spatial information
+is reorganized into a format compatible with the quantum encoding process, allowing each feature vector to be processed independently.
 
 The quantum layer employs amplitude encoding to map classical data into quantum states. The number of required qubits $n_Q$ is determined by the dimensionality
 of the input feature space $n$:
-
 $$
 n_Q = 2 + \log_2(n)
 $$
-
 Equivalently, the minimum number of qubits is chosen such that the quantum state space can fully encode the reshaped feature vector without information loss. 
 This ensures compatibility between the classical convolutional pipeline and the quantum embedding layer.
 
-
 # Research impact statement
-
-The framework has been validated by comparing its outputs against equivalent implementations in PennyLane. The mean numerical error between implementations is approximately:
-
-- Mean error: 2.45 × 10⁻⁸  
-- Standard deviation: 9.87 × 10⁻⁸  
-
-In benchmark experiments, the framework demonstrates reduced execution time compared to PennyLane-based implementations integrated with TensorFlow, PyTorch, and JAX-based systems, under the tested hardware configuration.
-
-These results indicate that the framework is a viable alternative for efficient quantum circuit simulation within TensorFlow-based machine learning pipelines.
 
 ---
 
 # AI usage disclosure
 
-Generative AI tools were used to assist in improving the clarity and structure of the manuscript and documentation. All technical content, experimental design, and implementation details were reviewed and validated by the author.
+Generative AI tools were used to assist in improving the clarity and structure of the manuscript and documentation. 
+All technical content, experimental design, and implementation details were reviewed and validated by the author.
 
----
 
 # Acknowledgements
 
-This work builds upon open-source software ecosystems including TensorFlow, PennyLane, PyTorch, and JAX. The author acknowledges their contributions to the quantum machine learning research community.
+This work builds upon TensorFlow open-source software ecosystems. 
 
----
 
 # References
 
