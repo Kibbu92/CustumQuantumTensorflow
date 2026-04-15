@@ -1,5 +1,5 @@
 ---
-title: "CustumQuantumTF: Efficient TensorFlow-Based Quantum Circuit Implementation Using Custom Layers for GPU-Accelerated Machine Learning on Windows"
+title: "Efficient TensorFlow-Based Quantum Circuit Implementation Using Custom Layers for GPU-Accelerated Machine Learning on Windows"
 authors:
   - name: Andrea Carbone
     affiliation: 1
