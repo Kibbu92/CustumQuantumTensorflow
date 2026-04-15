@@ -12,7 +12,7 @@ tags:
   - TensorFlow
   - quantum computing
   - quantum machine learning
-  - hybrid neural networks
+  - hybrid quantum neural networks
   - GPU computing
   - Windows
 date: 2026-04-10
@@ -22,11 +22,12 @@ bibliography: paper.bib
 # Summary
 
 The integration of quantum computing with classical machine learning is emerging as a promising research direction, 
-with the potential to significantly enhance model expressivity and computational efficiency [CITES]. However, despite strong 
-theoretical foundations, practical implementations are still largely limited to simulation-based approaches due to the
-current constraints of quantum hardware [CITE]. A similar situation occurred in the development of artificial neural networks, 
-which were first conceptualized in the mid-20th century [CITE] but became practically viable only in recent decades with 
-the advent of modern computational resources and large-scale datasets.
+with the potential to significantly enhance model expressivity and computational efficiency [@haldorai:2024, @sood:2024, 
+@peral:2024, @zeguendry:2023]. However, despite strong theoretical foundations, practical implementations are still 
+largely limited to simulation-based approaches due to the current constraints of quantum hardware. A similar situation
+occurred in the development of artificial neural networks, which were first conceptualized in the mid-20th century 
+[@mcculloch:1943] but became practically viable only in recent decades with the advent of modern computational resources
+and large-scale datasets.
 
 This repository introduces **QuLayer**, a TensorFlow-native framework for building and simulating quantum circuits 
 directly within classical deep learning pipelines. The primary goal of this software is to simplify the development 
@@ -42,12 +43,12 @@ parameterized quantum circuits and integrate them seamlessly into existing machi
 
 # Statement of Need
 
-HQML has gained increasing attention due to its potential advantages in both computational efficiency and model expressivity [CITE]. 
-Existing frameworks such as PennyLane [cite] and TensorFlow Quantum [cite] libraries offer powerful tools for simulating quantum 
-circuits and integrating them with classical machine learning models. However, they often introduce several practical challenges, 
-including complex dependencies, reliance on external simulation backends, and limited support for GPU acceleration in certain 
-configurations. Additionally, many of these tools are primarily optimized for Linux-based environments, making them less accessible 
-to users working on native Windows systems.
+HQML has gained increasing attention due to its potential advantages in both computational efficiency and model expressivity
+[@henderson:2020, @ceschini:2025]. Existing frameworks such as PennyLane [@bergholm:2018] and TensorFlow Quantum [@broughton:2020] 
+libraries offer powerful tools for simulating quantum circuits and integrating them with classical machine learning models.
+However, they often introduce several practical challenges, including complex dependencies, reliance on external simulation backends, 
+and limited support for GPU acceleration in certain configurations. Additionally, many of these tools are primarily optimized for 
+Linux-based environments, making them less accessible to users working on native Windows systems.
 
 These limitations can significantly hinder experimentation, particularly for researchers who:
 - do not have access to Linux-based infrastructures  
@@ -67,9 +68,9 @@ with classical deep learning models.
 
 Among these, PennyLane represents one of the most widely used solutions. It provides high-level abstractions for quantum
 circuit construction, including data encoding strategies and variational templates. A key strength of PennyLane lies in 
-its flexibility, supporting the integration with TensorFlow [CITE], PyTorch [CITE], and JAX/Haiku [CITE] through dedicated 
-interface layers (e.g., qml.qnn.KerasLayer, qml.qnn.TorchLayer). Similarly, TensorFlow Quantum enables the implementation 
-of HQNNs by using Cirq [cite] as its underlying quantum circuit simulator.
+its flexibility, supporting the integration with TensorFlow [@tensorflow:2015], PyTorch [@pytorch:2019], and FLAX/JAX 
+[@flax:2020, @jax:2018] through dedicated interface layers (e.g., qml.qnn.KerasLayer, qml.qnn.TorchLayer). Similarly, 
+TensorFlow Quantum enables the implementation of HQNNs by using Cirq [@Cirq:2025] as its underlying quantum circuit simulator.
 
 Despite their capabilities, these frameworks share a common architectural paradigm: quantum circuits are treated as external 
 components executed outside the core machine learning graph. This leads to:
@@ -108,9 +109,9 @@ The layer supports:
 Although the current implementation does not include the full set of possible quantum gates, it is sufficient to represent a wide class of 
 variational quantum circuits. The modular design allows additional operations to be incorporated with minimal effort. Indeed, by releasing 
 the framework as open-source software, the objective is to encourage collective development and continuous expansion of the available quantum 
-functionalities. The circuit architecture used in this work is inspired by circuit-centric variational models [20] and is composed by amplitude 
-encoding followed by strongly entangling layers. Although the present study focuses on this particular configuration, the quantum layer is not 
-restricted to it and can be readily adapted to alternative circuit architectures.
+functionalities. The circuit architecture used in this work is inspired by circuit-centric variational models [@schuld:2020] and is composed 
+by amplitude encoding followed by strongly entangling layers. Although the present study focuses on this particular configuration, the quantum 
+layer is not restricted to it and can be readily adapted to alternative circuit architectures.
 
 In particular, the quantum circuit consists on (see Figure):
 - Sequential application if single-qubit rotations ($$R_z(θ_1)$$, $$R_y(θ_2)$$, $$R_z(θ_3)$$).
@@ -123,16 +124,16 @@ In particular, the quantum circuit consists on (see Figure):
 
 ## HQNN implementation
 
-The proposed HQNN takes as input $28 \times 28$ grayscale images from the MNIST and FashionMNIST datasets. The input is processed through 
-a sequence of convolutional blocks designed to extract hierarchical feature representations. The first hidden stage consists of a two-dimensional 
-convolutional layer with $n$ filters and a $2 \times 2$ kernel. The layer uses *same* padding to preserve spatial dimensions and applies a ReLU 
-activation function to introduce non-linearity. This is followed by a max pooling operation with a $2 \times 2$ pooling window and a stride 
-of $1 \times 1$, which reduces redundancy while retaining the most relevant spatial features.
+The proposed HQNN takes as input $28 \times 28$ grayscale images from the MNIST and FashionMNIST datasets. The input is processed through a sequence 
+of convolutional blocks designed to extract hierarchical feature representations. The first hidden stage consists of a two-dimensional convolutional 
+layer with $n$ filters and a $2 \times 2$ kernel. The layer uses *same* padding to preserve spatial dimensions and applies a ReLU activation function 
+to introduce non-linearity. This is followed by a max pooling operation with a $2 \times 2$ pooling window and a stride of $1 \times 1$, which reduces 
+redundancy while retaining the most relevant spatial features.
 
-This convolution–pooling block is repeated three times, with the number of filters progressively increasing to $2n$ and $4n$. After the final 
-convolutional stage, the output tensor has shape $(\text{batch}, m, m, 4n)$, where $m$ denotes the resulting spatial resolution after max pooling operations. 
-The tensor is reshaped into $(\text{batch}, m \cdot m, 4n)$ before being passed to the quantum component. This transformation ensures that spatial information
-is reorganized into a format compatible with the quantum encoding process, allowing each feature vector to be processed independently.
+This convolution–pooling block is repeated three times, with the number of filters progressively increasing to $2n$ and $4n$. After the final convolutional 
+stage, the output tensor has shape $(\text{batch}, m, m, 4n)$, where $m$ denotes the resulting spatial resolution after max pooling operations. The tensor 
+is reshaped into $(\text{batch}, m \cdot m, 4n)$ before being passed to the quantum component. This transformation ensures that spatial information is 
+reorganized into a format compatible with the quantum encoding process, allowing each feature vector to be processed independently.
 
 The quantum embedding uses amplitude encoding, and the number of required qubits $n_Q$ is given by:
 
@@ -148,9 +149,8 @@ logarithmic mapping without requiring rounding or truncation.
 # Research Impact Statement
 
 The proposed QuLayer framework provides a reproducible and GPU-accelerate implementation of HQNNs through a fully TensorFlow-native design, embedding parameterized 
-quantum circuits directly into standard deep learning workflows. Comparison with PennyLane-based implementations demonstrates that the proposed approach reproduces 
-the behavior of established quantum simulation frameworks with high numerical accuracy. In terms of computational performance, QuLayer achieves significant reductions in 
-execution time compared to existing HQNN pipelines, while maintaining equivalent  predictive accuracy across benchmark datasets such as MNIST and FashionMNIST.
+quantum circuits directly into standard deep learning workflows. The framework has been rigorously evaluated in terms of accuracy and computatinal time using standard 
+benchmark datasets (MNIST and FashionMNIST). 
 
 A key aspect of this work is its reproducibility: the implementation is fully open-source, relies exclusively on standard TensorFlow operations, and is compatible
 with GPU execution on Windows systems without requiring external quantum simulation backends. These characteristics make QuLayer immediately usable for hybrid 
@@ -167,15 +167,10 @@ mapping and the StronglyEntanglingLayers() function for parameterized quantum ga
 This confirms that the proposed tensor-based formulation preserves the functional behavior of variational quantum circuits within numerical limits.
 
 <p align="center">
-  <img src="../Images/Error_ToT.png" width="50%"/>
+  <img src="../Images/QuLayerVsPennylane.png" width="90%"/>
 </p>
 
-<p align="center">
-  <img src="../Images/Error_ToT.png" width="45%" />
-  <img src="../Images/Performance.png" width="45%" />
-</p>
-
-In terms of computational efficiency, QuLayer provides consistent speedups compared to widely used hybrid quantum-classical implementations. Experimental results show:
+In terms of computational efficiency, QuLayer provides consistent speedups compared to widely used HQNN implementations. Experimental results show:
 
 - up to **10× reduction in execution time** compared to TensorFlow-based PennyLane integrations  
 - approximately **5× improvement** compared to PyTorch and JAX/Haiku-based implementations  
@@ -184,17 +179,14 @@ Importantly, these performance gains are obtained under controlled conditions wh
 across all frameworks. This ensures that reported improvements reflect differences in execution strategy rather than differences in model design or optimization setup.
 No degradation in predictive performance is observed across MNIST and FashionMNIST experiments, confirming that efficiency improvements do not compromise model accuracy.
 
-<p align="center">
-  <img src="../Images/Performance.png" width="500"/>
-</p>
 
 ## Practical Significance and Reproducibility
 
 A key aspect of this work is its focus on accessibility and reproducibility. The entire implementation is based exclusively on standard TensorFlow operations, enabling 
 native GPU acceleration on Windows systems without requiring external quantum simulation backends or Linux-based environments. This design significantly reduces 
-system-level complexity and lowers the barrier to entry for researchers in hybrid quantum-classical machine learning, particularly those without access to specialized 
-quantum computing infrastructures. All experiments are conducted using publicly available datasets, standardized preprocessing pipelines, and consistent training 
-configurations across frameworks. The full implementation is released as open-source software, enabling direct reproduction and extension of the reported results.
+system-level complexity and lowers the barrier to entry for researchers in HQNN, particularly those without access to specialized quantum computing infrastructures. 
+All experiments are conducted using publicly available datasets, standardized preprocessing pipelines, and consistent training configurations across frameworks. 
+The full implementation is released as open-source software, enabling direct reproduction and extension of the reported results.
 
 
 ## Scope and Interpretation
@@ -207,10 +199,13 @@ development cycles, improved accessibility, and scalable experimentation within 
 
 # AI usage disclosure
 
-Generative AI tools were used to assist in improving the clarity and structure of the manuscript and documentation. 
-All technical content, experimental design, and implementation details were reviewed and validated by the author.
+Generative AI tools were used exclusively as writing assistants to improve the clarity, structure, and linguistic quality of the manuscript and documentation. 
+Their use was limited to language refinement, formatting support, and textual organization. 
 
+Importantly, no generative AI tools were used in the design of the technical methodology, the development of the main concepts, the experimental setup, or the
+implementation of the Python code. All code was manually written, reviewed, and tested without AI-assisted code generation. The author retains full responsibility 
+for the correctness, validity, and reproducibility of all technical contributions presented in this work.
 
 # References
 
-(References are provided in `paper.bib` using full journal and conference names as required by JOSS.)
+(References are provided in `paper.bib`)
