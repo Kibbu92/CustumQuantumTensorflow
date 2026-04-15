@@ -43,22 +43,21 @@ parameterized quantum circuits and integrate them seamlessly into existing machi
 
 # Statement of Need
 
-HQML has gained increasing attention due to its potential advantages in both computational efficiency and model expressivity
-[@henderson:2020, @ceschini:2025]. Existing frameworks such as PennyLane [@bergholm:2018] and TensorFlow Quantum [@broughton:2020] 
-libraries offer powerful tools for simulating quantum circuits and integrating them with classical machine learning models.
-However, they often introduce several practical challenges, including complex dependencies, reliance on external simulation backends, 
-and limited support for GPU acceleration in certain configurations. Additionally, many of these tools are primarily optimized for 
-Linux-based environments, making them less accessible to users working on native Windows systems.
+HQML has gained increasing attention due to its potential advantages in both computational efficiency and model expressivity [@henderson:2020, 
+@ceschini:2025]. Existing frameworks such as PennyLane [@bergholm:2018] and TensorFlow Quantum [@broughton:2020] libraries offer powerful tools
+for simulating quantum circuits and integrating them with classical machine learning models. However, they often introduce several practical 
+challenges, including complex dependencies, reliance on external simulation backends, and limited support for GPU acceleration in certain 
+configurations. Additionally, many of these tools are primarily optimized for Linux-based environments, making them less accessible to users 
+working on native Windows systems.
 
 These limitations can significantly hinder experimentation, particularly for researchers who:
 - do not have access to Linux-based infrastructures  
 - require efficient GPU-based computation  
 - come from non-quantum backgrounds and need simpler tools  
 
-The proposed custum quantum layer (QuLayer.py) addresses these issues by providing a fully TensorFlow-native implementation of 
-quantum circuits. By relying exclusively on TensorFlow operations, the framework eliminates external dependencies and enables 
-seamless integration with existing deep learning pipelines. This approach makes HQML more accessible, efficient, and easier 
-to adopt across a broader research community.
+The proposed custum quantum layer (QuLayer.py) addresses these issues by providing a fully TensorFlow-native implementation of quantum circuits. 
+By relying exclusively on TensorFlow operations, the framework eliminates external dependencies and enables seamless integration with existing 
+deep learning pipelines. This approach makes HQML more accessible, efficient, and easier to adopt across a broader research community.
 
 
 # State of the field
@@ -66,22 +65,21 @@ to adopt across a broader research community.
 The field of HQNNs is dominated by well-established frameworks that enable quantum circuit simulation and integration
 with classical deep learning models.
 
-Among these, PennyLane represents one of the most widely used solutions. It provides high-level abstractions for quantum
-circuit construction, including data encoding strategies and variational templates. A key strength of PennyLane lies in 
-its flexibility, supporting the integration with TensorFlow [@tensorflow:2015], PyTorch [@pytorch:2019], and FLAX/JAX 
-[@flax:2020, @jax:2018] through dedicated interface layers (e.g., qml.qnn.KerasLayer, qml.qnn.TorchLayer). Similarly, 
-TensorFlow Quantum enables the implementation of HQNNs by using Cirq [@Cirq:2025] as its underlying quantum circuit simulator.
+Among these, PennyLane represents one of the most widely used solutions. It provides high-level abstractions for quantum circuit construction, 
+including data encoding strategies and variational templates. A key strength of PennyLane lies in its flexibility, supporting the integration 
+with TensorFlow [@tensorflow:2015], PyTorch [@pytorch:2019], and FLAX/JAX [@flax:2020, @jax:2018] through dedicated interface layers (e.g., 
+qml.qnn.KerasLayer, qml.qnn.TorchLayer). Similarly, TensorFlow Quantum enables the implementation of HQNNs by using Cirq [@Cirq:2025] as its 
+underlying quantum circuit simulator.
 
-Despite their capabilities, these frameworks share a common architectural paradigm: quantum circuits are treated as external 
-components executed outside the core machine learning graph. This leads to:
+Despite their capabilities, these frameworks share a common architectural paradigm: quantum circuits are treated as external components executed 
+outside the core machine learning graph. This leads to:
 - reliance on external quantum circuit simulator 
 - additional wrapper layers to ensure compatibility with frameworks  
 - cross-framework data conversion and execution overhead 
 
 ## Build vs Contribute Justification 
 
-In contrast, QuLayer adopts a fundamentally different design approach by embedding quantum operations directly into TensorFlow 
-as native differentiable operations.
+In contrast, QuLayer adopts a fundamentally different design approach by embedding quantum operations directly into TensorFlow as native differentiable operations.
 
 | Aspect | Existing frameworks | QuLayer |
 |------|--------------------|----------|
