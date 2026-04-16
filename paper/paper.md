@@ -65,7 +65,7 @@ deep learning pipelines. This approach makes HQML more accessible, efficient, an
 The field of HQNNs is dominated by well-established frameworks that enable quantum circuit simulation and integration
 with classical deep learning models.
 
-Among these, PennyLane represents one of the most widely used solutions. It provides high-level abstractions for quantum circuit construction, 
+Among these, PennyLane represents one of the most widely used solutions. It provides a set of predefined quantum operations and circuit, 
 including data encoding strategies and variational templates. A key strength of PennyLane lies in its flexibility, supporting the integration 
 with TensorFlow [@tensorflow:2015], PyTorch [@pytorch:2019], and FLAX/JAX [@flax:2020, @jax:2018] through dedicated interface layers (e.g., 
 qml.qnn.KerasLayer, qml.qnn.TorchLayer). Similarly, TensorFlow Quantum enables the implementation of HQNNs by using Cirq [@Cirq:2025] as its 
@@ -76,8 +76,6 @@ outside the core machine learning graph. This leads to:
 - reliance on external quantum circuit simulator 
 - additional wrapper layers to ensure compatibility with frameworks  
 - cross-framework data conversion and execution overhead 
-
-## Build vs Contribute Justification 
 
 In contrast, QuLayer adopts a fundamentally different design approach by embedding quantum operations directly into TensorFlow as native differentiable operations.
 
@@ -95,8 +93,8 @@ This makes QuLayer not a replacement for quantum hardware simulators, but a ligh
 
 ## Custom Quantum Layer
 
-The proposed framework implements a fully customizable TensorFlow layer that provides a set of fundamental quantum operations used as 
-building blocks for parameterized quantum circuits.
+The proposed framework implements a fully customizable TensorFlow layer that provides a set of fundamental quantum operations used as building blocks 
+for parameterized quantum circuits.
 
 The layer supports:
 - amplitude and angle embeddings for classical-to-quantum encoding  
@@ -112,7 +110,7 @@ by amplitude encoding followed by strongly entangling layers. Although the prese
 layer is not restricted to it and can be readily adapted to alternative circuit architectures.
 
 In particular, the quantum circuit consists on (see Figure):
-- Sequential application if single-qubit rotations ($$R_z(θ_1)$$, $$R_y(θ_2)$$, $$R_z(θ_3)$$).
+- Sequential application of single-qubit rotations ($$R_z(θ_1)$$, $$R_y(θ_2)$$, $$R_z(θ_3)$$).
 - Entanglement using controlled operations in a ring topology, with progressively skipping connections per layer
 - Measurement via expectation values of Pauli-Z operators 
 
@@ -192,7 +190,7 @@ The full implementation is released as open-source software, enabling direct rep
 It is important to emphasize that QuLayer is not intended as a replacement for dedicated quantum hardware simulators, but rather as a lightweight and efficient framework for 
 embedding variational quantum circuits within machine learning workflows. Its primary contribution lies in enabling fast experimentation and integration of quantum-inspired 
 models within widely used deep learning ecosystems. Overall, QuLayer provides a practical and immediately usable tool for hybrid quantum-classical research, enabling faster 
-development cycles, improved accessibility, and scalable experimentation within GPU-accelerated environments.
+development, improved accessibility, and scalable experimentation within GPU-accelerated environments.
 
 
 # AI usage disclosure
